@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Device Detection ---
     const isQuest = /oculus/i.test(navigator.userAgent) || /quest/i.test(navigator.userAgent);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isLaptop = !isQuest && !isMobile;
 
     // --- Audio Synthesis Engine ---
     let audioCtx;
@@ -183,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mStatusLabel.classList.add('text-cyan-400');
                 suppressArJsVideo();
             } else {
-                // Initial status for Mobile
+                // Initial status for Mobile / Laptop
                 mStatusLabel.innerText = "Scanning Environment...";
             }
             
@@ -216,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (xrControls) xrControls.setAttribute('visible', 'false');
     });
 
-    // --- Mobile Marker Tracking ---
+    // --- Mobile/Laptop Marker Tracking ---
     const marker = document.getElementById('hiro-marker');
     if (marker) {
         marker.addEventListener('markerFound', () => {
