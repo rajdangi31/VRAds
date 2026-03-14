@@ -31,11 +31,11 @@
       <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 5;"></a-entity>
     </a-entity>
 
-    <a-marker id="hiro-marker" preset="hiro">
+    <a-marker id="hiro-marker" preset="hiro" smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2">
       <a-entity class="ad-poc-content">
-        <a-plane position="0 0 0" rotation="-90 0 0" width="1.1" height="1.1" color="#000"
+        <a-plane position="0 0.01 0" rotation="-90 0 0" width="3.5" height="1.95" color="#000"
           material="opacity: 0.6; transparent: true; side: double"></a-plane>
-        <a-image src="#coke-img" position="0 0.01 0" rotation="-90 0 0" width="1" height="1" class="neon-flicker"
+        <a-image src="#coke-img" position="0 0.02 0" rotation="-90 0 0" width="3.2" height="1.8" class="neon-flicker"
           material="side: double; transparent: true; opacity: 1.0">
         </a-image>
       </a-entity>
