@@ -16,23 +16,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileUI = document.getElementById('mobile-ui');
     const mobileStats = document.getElementById('mobile-stats');
     const xrControls = document.getElementById('xr-controls');
-    
+
     // Shared Content Elements (Groups)
     const adPocGroups = document.querySelectorAll('.ad-poc-content');
     const cleanGroups = document.querySelectorAll('.clean-layer-content');
-    
+
     // UI Elements
     const mobileToggleBtn = document.getElementById('mobile-toggle-btn');
     const mobileBtnLabel = document.getElementById('mobile-btn-label');
     const btnColorBg = document.getElementById('btn-color-bg');
-    
+
     const xrToggleBtn = document.getElementById('xr-main-btn');
     const xrDataDisplay = document.querySelector('.data-display');
     const xrContent = document.getElementById('xr-content');
     const worldContent = document.getElementById('world-content');
     const mStatusDot = document.getElementById('m-status-dot');
     const mStatusLabel = document.getElementById('m-status-label');
-    
+
     // Metrics
     const mPlastic = document.getElementById('m-plastic');
     const mEnergy = document.getElementById('m-energy');
@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let droneGain;
     let voiceTimer;
     const adSnips = [
-        "System Link established.", "Visual debt authorized.", 
-        "Data harvest in progress.", "Rent your future today.", 
+        "System Link established.", "Visual debt authorized.",
+        "Data harvest in progress.", "Rent your future today.",
         "Consume the notification.", "Synthetic reality loading."
     ];
 
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Visibility Orchestration ---
     function syncEnvironment() {
         const isClean = state.mode === 'clean-layer';
-        
+
         adPocGroups.forEach(el => {
             el.setAttribute('visible', !isClean);
         });
@@ -110,17 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isClean) {
             mobileStats.classList.remove('opacity-0');
             if (xrDataDisplay) xrDataDisplay.setAttribute('visible', 'true');
-            
+
             mobileBtnLabel.innerText = "Revert System";
             btnColorBg.style.backgroundColor = "#00e5ff";
             mobileToggleBtn.style.boxShadow = "0 0 30px rgba(0, 229, 255, 0.4)";
-            
+
             btnLabels.forEach(el => el.setAttribute('value', 'REVERT SYSTEM'));
             btnMeshes.forEach(el => el.setAttribute('color', '#00e5ff'));
         } else {
             mobileStats.classList.add('opacity-0');
             if (xrDataDisplay) xrDataDisplay.setAttribute('visible', 'false');
-            
+
             mobileBtnLabel.innerText = "Purge Noise";
             btnColorBg.style.backgroundColor = "#ff0044";
             mobileToggleBtn.style.boxShadow = "0 0 30px rgba(255, 0, 68, 0.4)";
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (state.mode === 'ad-pocalypse') {
             state.mode = 'clean-layer';
-            
+
             // Audio Shift
             clearTimeout(voiceTimer);
             speechSynthesis.cancel();
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             playAdVoice();
             clearInterval(state.metricsInterval);
         }
-        
+
         syncEnvironment();
     }
 
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initOverlay.classList.add('opacity-0');
         setTimeout(() => {
             initOverlay.style.display = 'none';
-            
+
             if (isQuest) {
                 // Initial status for Quest
                 mStatusDot.classList.remove('bg-red-500');
@@ -188,10 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Initial status for Mobile / Laptop
                 mStatusLabel.innerText = "Scanning Environment...";
             }
-            
+
             syncEnvironment();
             playAdVoice();
-            updateRollingMetrics(); 
+            updateRollingMetrics();
         }, 1000);
     });
 
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileUI.classList.add('opacity-0');
         if (xrContent) xrContent.setAttribute('visible', 'true');
         if (xrControls) xrControls.setAttribute('visible', 'true');
-        
+
         if (isQuest) {
             if (worldContent) worldContent.setAttribute('visible', 'true');
             suppressArJsVideo();

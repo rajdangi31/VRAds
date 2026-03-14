@@ -6,12 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
   <title>VRads - Premium AR HUD</title>
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <!-- AR.js (Mobile Support) -->
   <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.5/aframe/build/aframe-ar.js"></script>
 
   <link rel="stylesheet" href="styles.css">
@@ -19,10 +16,8 @@
 
 <body class="m-0 overflow-hidden select-none bg-transparent">
 
-  <!-- HUD Aesthetic Layer -->
   <div class="hud-scanlines"></div>
 
-  <!-- Combined AR Scene -->
   <a-scene arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; detectionMode: mono_and_matrix;"
     webxr="requiredFeatures: local-floor, passthrough, hit-test;" xr-mode-ui="XRMode: ar"
     renderer="antialias: true; alpha: true; logarithmicDepthBuffer: true; colorManagement: true;">
@@ -31,37 +26,33 @@
       <img id="coke-img" src="coke.jpg">
     </a-assets>
 
-    <!-- QUEST: Laser Controls -->
     <a-entity id="xr-controls" visible="false">
       <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 5;"></a-entity>
       <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 5;"></a-entity>
     </a-entity>
 
-    <!-- MOBILE: Hiro Marker -->
-    <a-marker id="hiro-marker" preset="hiro" smooth="true" smoothCount="2" smoothTolerance="0.005" smoothThreshold="2">
+    <a-marker id="hiro-marker" preset="hiro">
       <a-entity class="ad-poc-content">
-        <!-- plane centered on marker at y=0, image at y=0.01 to avoid z-fighting -->
-        <a-plane position="0 0 0" rotation="-90 0 0" width="3.2" height="1.7" color="#000"
+        <a-plane position="0 0 0" rotation="-90 0 0" width="1.1" height="1.1" color="#000"
           material="opacity: 0.6; transparent: true; side: double"></a-plane>
-        <a-image src="#coke-img" position="0 0.01 0" rotation="-90 0 0" width="3" height="1.6" class="neon-flicker"
+        <a-image src="#coke-img" position="0 0.01 0" rotation="-90 0 0" width="1" height="1" class="neon-flicker"
           material="side: double; transparent: true; opacity: 1.0">
         </a-image>
       </a-entity>
 
       <a-entity class="clean-layer-content" visible="false">
-        <a-entity position="0 0.8 0" scale="0.6 0.6 0.6"
+        <a-entity position="0 0.2 0" scale="0.4 0.4 0.4"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
           <a-sphere radius="1.3" color="#00e5ff" material="opacity: 0.15; transparent: true; side: back"></a-sphere>
           <a-torus-knot radius="0.8" radius-tubular="0.08" p="3" q="7" color="#00e5ff"
             material="metalness: 0.8; roughness: 0.2"></a-torus-knot>
           <a-sphere radius="0.4" color="#ffffff" material="opacity: 0.9"></a-sphere>
         </a-entity>
-        <a-ring radius-inner="1.2" radius-outer="1.3" color="#00e5ff" position="0 0.02 0" rotation="-90 0 0"
+        <a-ring radius-inner="0.4" radius-outer="0.5" color="#00e5ff" position="0 0.02 0" rotation="-90 0 0"
           material="opacity: 0.4; transparent: true"></a-ring>
       </a-entity>
     </a-marker>
 
-    <!-- QUEST: World Content -->
     <a-entity id="world-content" visible="false">
       <a-entity class="ad-poc-content" position="0 1.5 -3">
         <a-plane position="0 0.45 0" rotation="0 0 0" width="3.2" height="1.7" color="#000"
@@ -84,7 +75,6 @@
       </a-entity>
     </a-entity>
 
-    <!-- QUEST: World Content -->
     <a-entity id="xr-content" position="0 0 -2" visible="false">
       <a-entity class="ad-poc-content">
         <a-image src="#coke-img" position="0 1.6 0" width="2.5" height="1.4"></a-image>
@@ -98,7 +88,6 @@
         </a-entity>
       </a-entity>
 
-      <!-- QUEST: Floating UI -->
       <a-entity id="xr-ui-panel" position="1.5 1.4 0.5" rotation="0 -35 0">
         <a-plane width="1.2" height="0.8" color="#0a0f19" material="opacity: 0.85; transparent: true"
           rounded="0.1"></a-plane>
@@ -121,12 +110,9 @@
     <a-entity camera position="0 1.6 0" look-controls></a-entity>
   </a-scene>
 
-  <!-- --- PREMIUM MOBILE HUD --- -->
   <div id="mobile-ui" class="fixed inset-0 pointer-events-none z-[2000] flex flex-col p-6 transition-all-premium">
 
-    <!-- Top Bar: Status and Metrics -->
     <div class="flex justify-between items-start w-full">
-      <!-- System Status Panel -->
       <div class="glass-panel p-3 px-4 rounded-xl flex items-center gap-3">
         <div class="hud-corner hud-tl"></div>
         <div class="hud-corner hud-tr"></div>
@@ -137,7 +123,6 @@
           class="text-[10px] uppercase tracking-[0.25em] text-white/70 font-bold">Initializing...</span>
       </div>
 
-      <!-- Environment Stats Panel -->
       <div id="mobile-stats" class="opacity-0 transition-all-premium">
         <div class="glass-panel p-3 px-4 rounded-xl flex flex-col items-end min-w-[120px]">
           <div class="hud-corner hud-tl"></div>
@@ -153,14 +138,12 @@
       </div>
     </div>
 
-    <!-- Center Reticle (Atmospheric) -->
     <div class="flex-grow flex items-center justify-center pointer-events-none opacity-20">
       <div class="w-16 h-16 border border-white/20 rounded-full flex items-center justify-center">
         <div class="w-1 h-1 bg-white/40 rounded-full"></div>
       </div>
     </div>
 
-    <!-- Bottom Interface: Primary Trigger -->
     <div class="w-full flex flex-col items-center gap-4 py-8">
       <p class="text-[8px] uppercase tracking-[0.5em] text-white/30 font-bold animate-pulse">Touch to Reclamation</p>
       <button id="mobile-toggle-btn"
@@ -172,7 +155,6 @@
     </div>
   </div>
 
-  <!-- --- INITIALIZATION OVERLAY --- -->
   <div id="init-overlay"
     class="fixed inset-0 z-[3000] bg-[#0a0f19] flex items-center justify-center p-8 transition-opacity duration-1000">
     <div class="text-center">
