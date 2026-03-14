@@ -99,12 +99,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Visibility Orchestration ---
     function syncEnvironment() {
         const isClean = state.mode === 'clean-layer';
+        
+        // Define which containers we should be managing
+        let activeContainers = [];
+        if (isQuest) {
+            activeContainers = [worldContent, xrContent];
+        } else {
+            // For mobile/laptop, only manage the marker content
+            const marker = document.getElementById('hiro-marker');
+            if (marker) activeContainers = [marker];
+        }
 
-        adPocGroups.forEach(el => {
-            el.setAttribute('visible', !isClean);
+        activeContainers.forEach(container => {
+            if (!container) return;
+            container.querySelectorAll('.ad-poc-content').forEach(el => {
+                el.setAttribute('visible', !isClean);
+            });
+            container.querySelectorAll('.clean-layer-content').forEach(el => {
+                el.setAttribute('visible', isClean);
+            });
         });
-
-        cleanGroups.forEach(el => el.setAttribute('visible', isClean));
 
         // UI Layer Transitions
         if (isClean) {
