@@ -15,9 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initOverlay = document.getElementById('init-overlay');
     const mobileUI = document.getElementById('mobile-ui');
     const mobileStats = document.getElementById('mobile-stats');
-    const xrContent = document.getElementById('xr-content');
     const xrControls = document.getElementById('xr-controls');
-    const worldContent = document.getElementById('world-content');
     
     // Shared Content Elements (Groups)
     const adPocGroups = document.querySelectorAll('.ad-poc-content');
@@ -30,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const xrToggleBtn = document.getElementById('xr-main-btn');
     const xrDataDisplay = document.querySelector('.data-display');
+    const xrContent = document.getElementById('xr-content');
+    const worldContent = document.getElementById('world-content');
+    const mStatusDot = document.getElementById('m-status-dot');
+    const mStatusLabel = document.getElementById('m-status-label');
     
     // Metrics
     const mPlastic = document.getElementById('m-plastic');
@@ -38,6 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const xEnergy = document.querySelector('.metric-energy');
     const btnMeshes = document.querySelectorAll('.btn-mesh');
     const btnLabels = document.querySelectorAll('.btn-label');
+
+    // --- Device Detection ---
+    const isQuest = /oculus/i.test(navigator.userAgent) || /quest/i.test(navigator.userAgent);
 
     // --- Audio Synthesis Engine ---
     let audioCtx;
@@ -152,41 +157,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.app = { toggleMode };
 
+    // --- Hide AR.js Video on Quest ---
+    function suppressArJsVideo() {
+        if (isQuest) {
+            const video = document.querySelector('video');
+            if (video) {
+                video.style.display = 'none';
+                video.style.opacity = '0';
+            }
+        }
+    }
+
     // --- Event Listeners ---
     document.getElementById('start-btn').addEventListener('click', () => {
         initAudio();
         initOverlay.classList.add('opacity-0');
         setTimeout(() => {
             initOverlay.style.display = 'none';
-            // Set initial status to "Linked" for Quest
-            const mStatusDot = document.getElementById('m-status-dot');
-            const mStatusLabel = document.getElementById('m-status-label');
-            if (mStatusDot) {
+            
+            if (isQuest) {
+                // Initial status for Quest
                 mStatusDot.classList.remove('bg-red-500');
                 mStatusDot.classList.add('bg-green-500');
-            }
-            if (mStatusLabel) {
                 mStatusLabel.innerText = "System Integrated";
                 mStatusLabel.classList.add('text-cyan-400');
+                suppressArJsVideo();
+            } else {
+                // Initial status for Mobile
+                mStatusLabel.innerText = "Scanning Environment...";
             }
             
             syncEnvironment();
             playAdVoice();
-            updateRollingMetrics(); // Start animation loop
+            updateRollingMetrics(); 
         }, 1000);
     });
 
     mobileToggleBtn.addEventListener('click', toggleMode);
     if (xrToggleBtn) xrToggleBtn.addEventListener('click', toggleMode);
 
-    // --- Device Detection ---
+    // --- XR Session Management ---
     scene.addEventListener('enter-vr', () => {
         state.isXR = true;
         mobileUI.classList.add('opacity-0');
         if (xrContent) xrContent.setAttribute('visible', 'true');
         if (xrControls) xrControls.setAttribute('visible', 'true');
-        // Ensure world content is visible in XR
-        if (worldContent) worldContent.setAttribute('visible', 'true');
+        
+        if (isQuest) {
+            if (worldContent) worldContent.setAttribute('visible', 'true');
+            suppressArJsVideo();
+        }
     });
 
     scene.addEventListener('exit-vr', () => {
@@ -196,6 +216,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (xrControls) xrControls.setAttribute('visible', 'false');
     });
 
+    // --- Mobile Marker Tracking ---
+    const marker = document.getElementById('hiro-marker');
+    if (marker) {
+        marker.addEventListener('markerFound', () => {
+            if (!isQuest) {
+                mStatusDot.classList.remove('bg-red-500');
+                mStatusDot.classList.add('bg-green-500');
+                mStatusLabel.innerText = "Target Synthesized";
+                mStatusLabel.classList.add('text-cyan-400');
+                syncEnvironment();
+            }
+        });
+
+        marker.addEventListener('markerLost', () => {
+            if (!isQuest) {
+                mStatusDot.classList.remove('bg-green-500');
+                mStatusDot.classList.add('bg-red-500');
+                mStatusLabel.innerText = "Scanning Environment...";
+                mStatusLabel.classList.remove('text-cyan-400');
+            }
+        });
+    }
 
     window.addEventListener('beforeunload', () => speechSynthesis.cancel());
 });
