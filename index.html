@@ -33,9 +33,10 @@
 
     <a-marker id="hiro-marker" preset="hiro" smooth="false">
       <a-entity class="ad-poc-content">
-        <a-plane position="0 0.005 0" rotation="-90 0 0" width="3.5" height="1.95" color="#000"
-          material="opacity: 0.6; transparent: true; side: double"></a-plane>
-        <a-image src="#coke-img" position="0 0.01 0" rotation="-90 0 0" width="3.2" height="1.8" class="neon-flicker"
+        <!-- Physical opaque base to completely mask the Hiro marker -->
+        <a-box position="0 0.02 0" rotation="0 0 0" width="3.5" height="0.02" depth="1.95" color="#000"
+          material="shader: flat; side: double; opacity: 1.0; transparent: false"></a-box>
+        <a-image src="#coke-img" position="0 0.031 0" rotation="-90 0 0" width="3.2" height="1.8" class="neon-flicker"
           material="side: double; transparent: true; opacity: 1.0">
         </a-image>
       </a-entity>
