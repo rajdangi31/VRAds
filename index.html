@@ -42,13 +42,14 @@
     <!-- MOBILE: Hiro Marker -->
     <a-marker id="hiro-marker" preset="hiro" smooth="true" smoothCount="2" smoothTolerance="0.005" smoothThreshold="2">
       <a-entity class="ad-poc-content">
-         <a-plane position="0 0.01 0" rotation="-90 0 0" width="3.2" height="1.7" color="#000" material="opacity: 0.6; transparent: true"></a-plane>
+         <a-plane position="0 0.05 0" rotation="-90 0 0" width="3.2" height="1.7" color="#000" material="opacity: 0.6; transparent: true; side: double"></a-plane>
          <a-image src="#coke-img" 
-                  position="0 0.02 0" 
+                  position="0 0.06 0" 
                   rotation="-90 0 0" 
                   width="3" 
                   height="1.6" 
-                  class="neon-flicker">
+                  class="neon-flicker"
+                  material="side: double; transparent: true; opacity: 1.0">
          </a-image>
       </a-entity>
       
