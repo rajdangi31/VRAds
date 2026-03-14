@@ -31,11 +31,11 @@
       <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 5;"></a-entity>
     </a-entity>
 
-    <a-marker id="hiro-marker" preset="hiro" smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2">
+    <a-marker id="hiro-marker" preset="hiro" smooth="false">
       <a-entity class="ad-poc-content">
-        <a-plane position="0 0.01 0" rotation="-90 0 0" width="3.5" height="1.95" color="#000"
+        <a-plane position="0 0.005 0" rotation="-90 0 0" width="3.5" height="1.95" color="#000"
           material="opacity: 0.6; transparent: true; side: double"></a-plane>
-        <a-image src="#coke-img" position="0 0.02 0" rotation="-90 0 0" width="3.2" height="1.8" class="neon-flicker"
+        <a-image src="#coke-img" position="0 0.01 0" rotation="-90 0 0" width="3.2" height="1.8" class="neon-flicker"
           material="side: double; transparent: true; opacity: 1.0">
         </a-image>
       </a-entity>
@@ -55,9 +55,9 @@
 
     <a-entity id="world-content" visible="false">
       <a-entity class="ad-poc-content" position="0 1.5 -3">
-        <a-plane position="0 0.45 0" rotation="0 0 0" width="3.2" height="1.7" color="#000"
+        <a-plane position="0 0.01 0" rotation="0 0 0" width="3.2" height="1.7" color="#000"
           material="opacity: 0.6; transparent: true"></a-plane>
-        <a-image src="#coke-img" position="0 0.5 0" rotation="0 0 0" width="3" height="1.6" class="neon-flicker"
+        <a-image src="#coke-img" position="0 0.01 0" rotation="0 0 0" width="3" height="1.6" class="neon-flicker"
           animation="property: position; to: 0 0.6 0; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
         </a-image>
       </a-entity>
@@ -96,7 +96,7 @@
           <a-text value="PURGE NOISE" align="center" width="2" position="0 0 0.02" class="btn-label"
             font="mozillavr"></a-text>
         </a-entity>
-        <a-entity class="data-display" position="0 0.15 0.05" visible="false">
+        <a-entity class="data-display" position="0 0.01 0.05" visible="false">
           <a-text value="THE CLEAN LAYER" color="#00e5ff" align="center" width="2.8" position="0 0.2 0"
             font="mozillavr"></a-text>
           <a-text class="metric-plastic" value="Plastic: 0g" color="white" align="center" width="1.8"
