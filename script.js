@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileStats = document.getElementById('mobile-stats');
     const xrContent = document.getElementById('xr-content');
     const xrControls = document.getElementById('xr-controls');
+    const worldContent = document.getElementById('world-content');
     
     // Shared Content Elements (Groups)
     const adPocGroups = document.querySelectorAll('.ad-poc-content');
@@ -94,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         adPocGroups.forEach(el => {
             el.setAttribute('visible', !isClean);
-            el.querySelectorAll('a-image').forEach(img => img.setAttribute('visible', !isClean));
         });
 
         cleanGroups.forEach(el => el.setAttribute('visible', isClean));
@@ -158,6 +158,18 @@ document.addEventListener('DOMContentLoaded', () => {
         initOverlay.classList.add('opacity-0');
         setTimeout(() => {
             initOverlay.style.display = 'none';
+            // Set initial status to "Linked" for Quest
+            const mStatusDot = document.getElementById('m-status-dot');
+            const mStatusLabel = document.getElementById('m-status-label');
+            if (mStatusDot) {
+                mStatusDot.classList.remove('bg-red-500');
+                mStatusDot.classList.add('bg-green-500');
+            }
+            if (mStatusLabel) {
+                mStatusLabel.innerText = "System Integrated";
+                mStatusLabel.classList.add('text-cyan-400');
+            }
+            
             syncEnvironment();
             playAdVoice();
             updateRollingMetrics(); // Start animation loop
@@ -173,6 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileUI.classList.add('opacity-0');
         if (xrContent) xrContent.setAttribute('visible', 'true');
         if (xrControls) xrControls.setAttribute('visible', 'true');
+        // Ensure world content is visible in XR
+        if (worldContent) worldContent.setAttribute('visible', 'true');
     });
 
     scene.addEventListener('exit-vr', () => {
@@ -182,27 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (xrControls) xrControls.setAttribute('visible', 'false');
     });
 
-    // --- Marker Tracking Feedback ---
-    const marker = document.getElementById('hiro-marker');
-    const mStatusDot = document.getElementById('m-status-dot');
-    const mStatusLabel = document.getElementById('m-status-label');
-
-    if (marker) {
-        marker.addEventListener('markerFound', () => {
-            mStatusDot.classList.remove('bg-red-500');
-            mStatusDot.classList.add('bg-green-500');
-            mStatusLabel.innerText = "Target Synthesized";
-            mStatusLabel.classList.add('text-cyan-400');
-            syncEnvironment();
-        });
-
-        marker.addEventListener('markerLost', () => {
-            mStatusDot.classList.remove('bg-green-500');
-            mStatusDot.classList.add('bg-red-500');
-            mStatusLabel.innerText = "Scanning Environment...";
-            mStatusLabel.classList.remove('text-cyan-400');
-        });
-    }
 
     window.addEventListener('beforeunload', () => speechSynthesis.cancel());
 });
