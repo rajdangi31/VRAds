@@ -1,4 +1,4 @@
-// VRads - Multi-Device AR Stabilization Logic
+// VRads - Premium AR HUD Logic
 
 document.addEventListener('DOMContentLoaded', () => {
     const state = {
@@ -37,10 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.plastic < state.targetPlastic) state.plastic += Math.ceil((state.targetPlastic - state.plastic) * 0.1);
         if (state.energy < state.targetEnergy) state.energy += Math.ceil((state.targetEnergy - state.energy) * 0.1);
         
-        const pElem = document.getElementById('m-plastic');
-        const eElem = document.getElementById('m-energy');
-        if (pElem) pElem.innerText = state.plastic.toLocaleString();
-        if (eElem) eElem.innerText = state.energy.toLocaleString();
+        const pE = document.getElementById('m-plastic');
+        const eE = document.getElementById('m-energy');
+        if (pE) pE.innerText = state.plastic.toLocaleString();
+        if (eE) eE.innerText = state.energy.toLocaleString();
         
         requestAnimationFrame(updateRollingMetrics);
     }
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.mode = 'clean-layer';
                 droneGain.gain.setTargetAtTime(0.25, audioCtx.currentTime, 1);
                 state.metricsInterval = setInterval(() => {
-                    state.targetPlastic += 4;
+                    state.targetPlastic += 5;
                     state.targetEnergy += 12;
                 }, 1500);
             } else {
@@ -94,23 +94,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function recalibrateResolution() {
         console.log("Forcing AR Resolution Recalibration...");
+        // This is critical on mobile browsers that hide/show the address bar
         window.dispatchEvent(new Event('resize'));
         
-        // Ensure AR.js video and canvas fill the true viewport
-        setTimeout(() => {
-            const elements = document.querySelectorAll('video, #arjs-video, .a-canvas');
-            elements.forEach(el => {
-                el.style.width = '100vw';
-                el.style.height = '100dvh';
-                el.style.objectFit = 'cover';
-                el.style.position = 'absolute';
-                el.style.top = '0';
-                el.style.left = '0';
-            });
-            window.dispatchEvent(new Event('resize'));
-        }, 500);
+        const elements = document.querySelectorAll('video, .a-canvas, #arjs-video');
+        elements.forEach(el => {
+            el.style.width = '100vw';
+            el.style.height = '100dvh';
+            el.style.objectFit = 'cover';
+            el.style.position = 'fixed';
+            el.style.top = '0';
+            el.style.left = '0';
+        });
+
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
     }
 
+    // Force recalibration on all major window events
     window.addEventListener('load', recalibrateResolution);
+    window.addEventListener('resize', recalibrateResolution);
     window.addEventListener('orientationchange', () => setTimeout(recalibrateResolution, 500));
 });
