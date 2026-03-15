@@ -20,6 +20,7 @@
 
   <a-scene arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; detectionMode: mono_and_matrix;"
     webxr="requiredFeatures: local-floor, passthrough, hit-test;" xr-mode-ui="XRMode: ar"
+    ar-hit-test="target: #spatial-anchor; type: footprint"
     renderer="antialias: true; alpha: true; logarithmicDepthBuffer: true; colorManagement: true;">
 
     <a-assets>
@@ -29,6 +30,11 @@
     <a-entity id="xr-controls" visible="false">
       <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 5;"></a-entity>
       <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 5;"></a-entity>
+    </a-entity>
+
+    <!-- Spatial Anchor for Quest Hit-Testing -->
+    <a-entity id="spatial-anchor" visible="false">
+      <a-ring color="#00e5ff" rotation="-90 0 0" radius-inner="0.1" radius-outer="0.15" opacity="0.8"></a-ring>
     </a-entity>
 
     <a-marker id="hiro-marker" preset="hiro" smooth="false">

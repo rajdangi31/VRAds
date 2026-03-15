@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const xrDataDisplay = document.querySelector('.data-display');
     const xrContent = document.getElementById('xr-content');
     const worldContent = document.getElementById('world-content');
+    const questHUD = document.getElementById('quest-spatial-hud');
+    const qStatusText = document.getElementById('q-status-text');
     const mStatusDot = document.getElementById('m-status-dot');
     const mStatusLabel = document.getElementById('m-status-label');
 
@@ -152,6 +154,12 @@ document.addEventListener('DOMContentLoaded', () => {
             btnLabels.forEach(el => el.setAttribute('value', 'PURGE NOISE'));
             btnMeshes.forEach(el => el.setAttribute('color', '#ff0044'));
         }
+
+        // Quest HUD Updates
+        if (isQuest && questHUD) {
+            qStatusText.setAttribute('value', isClean ? 'CLEAN LAYER ACTIVE' : 'AD-POCALYPSE ACTIVE');
+            qStatusText.setAttribute('color', isClean ? '#00e5ff' : '#ff0044');
+        }
     }
 
     function toggleMode() {
@@ -228,15 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileUI.classList.add('opacity-0');
         if (xrContent) xrContent.setAttribute('visible', 'true');
         if (xrControls) xrControls.setAttribute('visible', 'true');
+        if (questHUD) questHUD.setAttribute('visible', 'true');
 
         if (isQuest) {
-            if (worldContent) worldContent.setAttribute('visible', 'true');
-            if (xrContent) xrContent.setAttribute('visible', 'true');
             suppressArJsVideo();
-        } else {
-            // Hard hide anything that isn't the marker content for desktop/mobile
-            if (worldContent) worldContent.parentNode.removeChild(worldContent);
-            if (xrContent) xrContent.parentNode.removeChild(xrContent);
         }
     });
 
@@ -245,6 +248,42 @@ document.addEventListener('DOMContentLoaded', () => {
         mobileUI.classList.remove('opacity-0');
         if (xrContent) xrContent.setAttribute('visible', 'false');
         if (xrControls) xrControls.setAttribute('visible', 'false');
+        if (questHUD) questHUD.setAttribute('visible', 'false');
+    });
+
+    // --- Quest Spatial Hit-Test Placement ---
+    scene.addEventListener('ar-hit-test-select', (e) => {
+        if (!isQuest) return;
+        
+        const pos = e.detail.position;
+        const rot = e.detail.rotation;
+        
+        // Spawn a spatial ad at the hit point
+        const newAd = document.createElement('a-entity');
+        newAd.setAttribute('position', pos);
+        newAd.setAttribute('rotation', rot);
+        newAd.classList.add(state.mode === 'ad-pocalypse' ? 'ad-poc-content' : 'clean-layer-content');
+        
+        // Use the existing content templates
+        const template = state.mode === 'ad-pocalypse' 
+            ? document.querySelector('#hiro-marker .ad-poc-content').cloneNode(true)
+            : document.querySelector('#hiro-marker .clean-layer-content').cloneNode(true);
+            
+        newAd.appendChild(template);
+        scene.appendChild(newAd);
+        
+        // Play spatial haptic/audio feedback
+        if (audioCtx) {
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.connect(g);
+            g.connect(audioCtx.destination);
+            osc.frequency.value = 880;
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
     });
 
     // --- Mobile/Laptop Marker Tracking ---
