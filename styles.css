@@ -13,52 +13,49 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* Hard reset to prevent browser UI from messing with viewport size */
-html,
 body {
   margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
   overflow: hidden;
-  background-color: #000;
+  background-color: transparent !important;
   font-family: var(--font-main);
   position: fixed;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile stability */
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+  font-size: clamp(14px, 2vw, 18px); /* Responsive base font size */
 }
 
 img {
   -webkit-user-drag: none;
 }
 
-/* ========================================== */
-/* THE BULLETPROOF AR FULLSCREEN FIX          */
-/* ========================================== */
-video,
-#arjs-video,
-.a-canvas {
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: cover !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
+/* --- AR Container Layers & Resolution Enforcement --- */
+/* Forces the AR.js video to fill the screen without squishing the aspect ratio */
 video,
 #arjs-video {
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  object-fit: cover !important;
+  position: absolute !important;
   z-index: -2 !important;
 }
 
 .a-canvas {
   z-index: 1 !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
 }
-
-/* ========================================== */
 
 /* --- Premium Glassmorphism --- */
 .glass-panel {
@@ -85,8 +82,8 @@ video,
 /* --- HUD Corner Decoration --- */
 .hud-corner {
   position: absolute;
-  width: 12px;
-  height: 12px;
+  width: clamp(8px, 1.5vw, 12px);
+  height: clamp(8px, 1.5vw, 12px);
   border-color: var(--cyan-primary);
   opacity: 0.6;
   transition: border-color 0.5s ease;
@@ -197,7 +194,7 @@ video,
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Fix for WebXR DOM Overlay */
+/* Fix for WebXR DOM Overlay to ensure it doesn't block interactions */
 #mobile-ui {
   pointer-events: none;
 }
