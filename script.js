@@ -47,6 +47,25 @@ AFRAME.registerComponent('webxr-image-tracker', {
 
 // --- Main Application Logic ---
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Ad Randomization Engine ---
+    const ads = [
+        { id: 'ad-1', src: 'premium_ad_1.png', voicePrefix: 'Premium Link established.' },
+        { id: 'ad-2', src: 'premium_ad_2.png', voicePrefix: 'System Evolution authorized.' },
+        { id: 'ad-3', src: 'premium_ad_3.png', voicePrefix: 'Luxury Layer loading.' }
+    ];
+    const selectedAd = ads[Math.floor(Math.random() * ads.length)];
+    const adAsset = document.getElementById('premium-ad-asset');
+    if (adAsset) adAsset.setAttribute('src', selectedAd.src);
+
+    // Update voice logs with premium snips
+    const adSnips = [
+        selectedAd.voicePrefix,
+        "Data harvest in progress.",
+        "Synthesized perfection detected.",
+        "Visual fidelity optimized.",
+        "Quantum resolution locked."
+    ];
+
     // --- State Management ---
     const state = {
         mode: 'ad-pocalypse', // 'ad-pocalypse' | 'clean-layer'
@@ -93,12 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let droneOsc;
     let droneGain;
     let voiceTimer;
-    const adSnips = [
-        "System Link established.", "Visual debt authorized.",
-        "Data harvest in progress.", "Rent your future today.",
-        "Consume the notification.", "Synthetic reality loading."
-    ];
-
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -277,8 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newAd = document.createElement('a-entity');
         newAd.setAttribute('position', pos);
         newAd.setAttribute('rotation', rot);
-        newAd.classList.add(state.mode === 'ad-pocalypse' ? 'ad-poc-content' : 'clean-layer-content');
-
+        // Clone geometry from the marker templates
         const templateSelector = state.mode === 'ad-pocalypse'
             ? '#webxr-image-target .ad-poc-content'
             : '#webxr-image-target .clean-layer-content';

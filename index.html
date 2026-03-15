@@ -19,14 +19,20 @@
   <div class="hud-scanlines"></div>
 
   <a-scene
-    arjs="sourceType: webcam; sourceWidth: 1280; sourceHeight: 720; displayWidth: 1280; displayHeight: 720; debugUIEnabled: false; trackingMethod: best; detectionMode: mono_and_matrix;"
+    arjs="sourceType: webcam; sourceWidth: 1920; sourceHeight: 1080; displayWidth: 1920; displayHeight: 1080; debugUIEnabled: false; trackingMethod: best; detectionMode: mono_and_matrix;"
     webxr="requiredFeatures: hit-test, local-floor; optionalFeatures: dom-overlay, image-tracking; overlayElement: #mobile-ui"
     xr-mode-ui="XRMode: ar" ar-hit-test="target: #spatial-anchor; type: footprint"
-    renderer="antialias: true; alpha: true; logarithmicDepthBuffer: true; colorManagement: true;"
-    background="transparent: true" webxr-image-tracker> <a-assets>
-      <img id="coke-img" src="coke.jpg" crossorigin="anonymous">
+    renderer="antialias: true; precision: high; colorManagement: true; alpha: true; logarithmicDepthBuffer: true; highRefreshRate: true;"
+    background="transparent: true" webxr-image-tracker>
+    <a-assets>
+      <img id="premium-ad-asset" src="premium_ad_1.png" crossorigin="anonymous">
       <img id="hiro-img" src="hiro.png" crossorigin="anonymous">
     </a-assets>
+
+    <!-- Professional Studio Lighting -->
+    <a-light type="ambient" color="#bbb"></a-light>
+    <a-light type="directional" color="#ffffff" intensity="0.6" position="-1 2 1"></a-light>
+    <a-light type="directional" color="#00e5ff" intensity="0.4" position="1 1 0"></a-light>
 
     <a-entity id="xr-controls" visible="false">
       <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 5;"></a-entity>
@@ -42,8 +48,8 @@
         <a-entity class="ad-poc-content">
           <a-box position="0 0.85 -0.05" width="3.2" height="1.8" depth="0.1" color="#000"
             material="shader: flat"></a-box>
-          <a-image src="#coke-img" position="0 0.85 0.01" width="3.2" height="1.8" class="neon-flicker"
-            material="side: double"></a-image>
+          <a-image id="active-ad-image" src="#premium-ad-asset" position="0 0.85 0.01" width="3.2" height="1.8" class="neon-flicker"
+            material="side: double; shader: standard; metalness: 0.5; roughness: 0.2; anisotropy: 16;"></a-image>
         </a-entity>
 
         <a-entity class="clean-layer-content" visible="false">
@@ -65,8 +71,8 @@
         <a-entity class="ad-poc-content">
           <a-box position="0 0.85 -0.05" width="3.2" height="1.8" depth="0.1" color="#000"
             material="shader: flat"></a-box>
-          <a-image src="#coke-img" position="0 0.85 0.01" width="3.2" height="1.8" class="neon-flicker"
-            material="side: double"></a-image>
+          <a-image id="active-ad-image-webxr" src="#premium-ad-asset" position="0 0.85 0.01" width="3.2" height="1.8" class="neon-flicker"
+            material="side: double; shader: standard; metalness: 0.5; roughness: 0.2; anisotropy: 16;"></a-image>
         </a-entity>
 
         <a-entity class="clean-layer-content" visible="false">
