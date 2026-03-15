@@ -13,17 +13,14 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* Hard reset to prevent browser UI from messing with viewport size */
-html,
 body {
   margin: 0;
-  padding: 0;
-  width: 100vw;
-  height: 100vh;
   overflow: hidden;
-  background-color: #000;
+  background-color: transparent !important;
   font-family: var(--font-main);
   position: fixed;
+  width: 100vw;
+  height: 100vh;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
@@ -33,55 +30,28 @@ img {
   -webkit-user-drag: none;
 }
 
-/* ========================================== */
-/* BASE AR FULLSCREEN RULES (Desktop Safe)    */
-/* ========================================== */
-video,
-#arjs-video,
-.a-canvas {
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: cover !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
+/* --- AR Container Layers & Resolution Enforcement --- */
+/* Forces the AR.js video to fill the screen without squishing the aspect ratio */
 video,
 #arjs-video {
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  object-fit: cover !important;
+  position: absolute !important;
   z-index: -2 !important;
 }
 
 .a-canvas {
   z-index: 1 !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
 }
-
-/* ========================================== */
-/* THE MOBILE FIX (Ring-fenced override)      */
-/* ========================================== */
-@media screen and (max-width: 768px) {
-
-  html,
-  body {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  video,
-  #arjs-video {
-    min-width: 100vw !important;
-    min-height: 100vh !important;
-    /* Explicitly nuking AR.js injected negative margins */
-    margin-left: 0 !important;
-    margin-top: 0 !important;
-    transform: translate3d(0, 0, 0) !important;
-    /* Wipes arbitrary AR.js transforms */
-  }
-}
-
-/* ========================================== */
 
 /* --- Premium Glassmorphism --- */
 .glass-panel {
@@ -220,7 +190,7 @@ video,
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Fix for WebXR DOM Overlay */
+/* Fix for WebXR DOM Overlay to ensure it doesn't block interactions */
 #mobile-ui {
   pointer-events: none;
 }
