@@ -16,45 +16,42 @@
 body {
   margin: 0;
   overflow: hidden;
-  background-color: transparent !important;
+  background-color: #000 !important;
   font-family: var(--font-main);
   position: fixed;
   width: 100vw;
   height: 100vh;
-  height: 100dvh; /* Dynamic viewport height for mobile stability */
+  height: 100dvh;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
-  font-size: clamp(14px, 2vw, 18px); /* Responsive base font size */
 }
 
 img {
   -webkit-user-drag: none;
 }
 
-/* --- AR Container Layers & Resolution Enforcement --- */
-/* Forces the AR.js video to fill the screen without squishing the aspect ratio */
+/* --- Bulletproof Video Fullscreen --- */
+/* We target the video and canvas to fill the dynamic viewport precisely */
 video,
-#arjs-video {
+#arjs-video,
+.a-canvas {
   width: 100vw !important;
-  height: 100vh !important;
   height: 100dvh !important;
-  margin: 0 !important;
-  top: 0 !important;
-  left: 0 !important;
   object-fit: cover !important;
   position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+}
+
+video,
+#arjs-video {
   z-index: -2 !important;
 }
 
 .a-canvas {
   z-index: 1 !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
 }
 
 /* --- Premium Glassmorphism --- */
@@ -68,54 +65,19 @@ video,
   overflow: hidden;
 }
 
-.glass-panel::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent);
-  pointer-events: none;
-}
-
 /* --- HUD Corner Decoration --- */
 .hud-corner {
   position: absolute;
-  width: clamp(8px, 1.5vw, 12px);
-  height: clamp(8px, 1.5vw, 12px);
+  width: 10px;
+  height: 10px;
   border-color: var(--cyan-primary);
-  opacity: 0.6;
-  transition: border-color 0.5s ease;
+  opacity: 0.8;
 }
 
-.hud-tl {
-  top: 0;
-  left: 0;
-  border-top: 2px solid;
-  border-left: 2px solid;
-}
-
-.hud-tr {
-  top: 0;
-  right: 0;
-  border-top: 2px solid;
-  border-right: 2px solid;
-}
-
-.hud-bl {
-  bottom: 0;
-  left: 0;
-  border-bottom: 2px solid;
-  border-left: 2px solid;
-}
-
-.hud-br {
-  bottom: 0;
-  right: 0;
-  border-bottom: 2px solid;
-  border-right: 2px solid;
-}
+.hud-tl { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+.hud-tr { top: 0; right: 0; border-top: 2px solid; border-right: 2px solid; }
+.hud-bl { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; }
+.hud-br { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
 
 /* --- HUD Scanline Effect --- */
 .hud-scanlines {
@@ -129,92 +91,89 @@ video,
   background-size: 100% 4px, 3px 100%;
   pointer-events: none;
   z-index: 1000;
-  opacity: 0.2;
+  opacity: 0.15;
 }
 
-/* --- Animations --- */
-@keyframes neon-flicker {
-
-  0%,
-  18%,
-  22%,
-  25%,
-  53%,
-  57%,
-  100% {
-    opacity: 1;
-    filter: brightness(1.5) drop-shadow(0 0 10px var(--cyan-glow));
-  }
-
-  20%,
-  24%,
-  55% {
-    opacity: 0.8;
-    filter: brightness(0.9);
-  }
+/* --- Mobile HUD UI --- */
+#mobile-ui {
+  pointer-events: none;
+  z-index: 2000;
+  padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px) 20px;
+  display: flex !important; /* Ensure it's flex */
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100dvh;
+  box-sizing: border-box;
 }
 
-.neon-flicker {
-  animation: neon-flicker 2s infinite alternate ease-in-out;
+.hud-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  pointer-events: none;
 }
 
-@keyframes pulse-cyan {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4);
-  }
+#mobile-ui button,
+.pointer-events-auto {
+  pointer-events: auto;
+}
 
-  70% {
-    box-shadow: 0 0 0 15px rgba(0, 229, 255, 0);
-  }
+/* Typography */
+.status-label {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  font-weight: 900;
+  text-transform: uppercase;
+}
 
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0);
-  }
+.metrics-label {
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  font-weight: 900;
+  color: var(--cyan-primary);
+  text-transform: uppercase;
+}
+
+.metrics-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* --- Transitions --- */
+.opacity-0 {
+  opacity: 0 !important;
+  pointer-events: none;
+  transform: translateY(15px);
+}
+
+.transition-all-premium {
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pulse-primary {
   animation: pulse-cyan 2s infinite;
 }
 
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+@keyframes pulse-cyan {
+  0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 229, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
 }
 
-/* --- State Transitions --- */
-.opacity-0 {
-  opacity: 0 !important;
-  pointer-events: none;
-  transform: translateY(10px);
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; filter: brightness(1.2); }
+  20%, 24%, 55% { opacity: 0.8; filter: brightness(0.8); }
 }
 
-.transition-all-premium {
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Fix for WebXR DOM Overlay to ensure it doesn't block interactions */
-#mobile-ui {
-  pointer-events: none;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-}
-
-#mobile-ui button, 
-#mobile-ui .pointer-events-auto {
-  pointer-events: auto;
+.neon-flicker {
+  animation: neon-flicker 2s infinite alternate ease-in-out;
 }
 
 /* Responsiveness Tweaks */
 @media (orientation: landscape) {
   #mobile-ui {
-    flex-direction: row;
-    align-items: flex-end;
-    padding-bottom: 2rem;
-  }
-  
-  #mobile-stats {
-    margin-bottom: 0;
-    margin-right: 2rem;
+    padding: 20px 40px;
   }
 }
