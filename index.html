@@ -110,8 +110,18 @@
             position="0 0.05 0" font="mozillavr"></a-text>
           <a-text class="metric-energy" value="Energy: 0W" color="white" align="center" width="1.8" position="0 -0.05 0"
             font="mozillavr"></a-text>
-        </a-entity> -->
     </a-entity>
+    </a-entity>
+
+    <!-- Floating Spatial HUD for Quest 3S -->
+    <a-entity id="quest-spatial-hud" visible="false">
+      <!-- Attached to camera or floating in front -->
+      <a-entity position="0 0.5 -1">
+        <a-plane width="0.8" height="0.4" material="color: #000; opacity: 0.3; transparent: true" rounded="0.1">
+          <a-text value="SYSTEM STATUS: OPTIMAL" color="#00e5ff" align="center" width="1.5" position="0 0.1 0.01" font="mozillavr"></a-text>
+          <a-text id="q-status-text" value="AD-POCALYPSE MODE" color="#ff0044" align="center" width="1.2" position="0 -0.05 0.01" font="mozillavr"></a-text>
+        </a-plane>
+      </a-entity>
     </a-entity>
 
     <a-entity camera></a-entity>
