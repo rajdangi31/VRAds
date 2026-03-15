@@ -5,12 +5,9 @@ AFRAME.registerComponent('webxr-image-tracker', {
             this.isWebXR = this.el.sceneEl.is('vr-mode') || this.el.sceneEl.is('ar-mode');
             this.targetEntity = document.getElementById('webxr-image-target');
 
-            // Note: Native WebXR Image Tracking requires ImageBitmaps to be passed during session init.
-            // As this is an experimental API, we hook into the XR frame to check for tracking results.
             const session = this.el.sceneEl.renderer.xr.getSession();
             if (session) {
                 console.log("WebXR Session active. Checking for experimental Image Tracking API...");
-                // If the flag is enabled in chrome://flags, the session will process image tracking here.
             }
         });
 
@@ -25,8 +22,6 @@ AFRAME.registerComponent('webxr-image-tracker', {
         const frame = this.el.sceneEl.frame;
         if (!frame) return;
 
-        // Experimental WebXR Image Tracking Hook
-        // When the Quest OS recognizes the image, it returns results in frame.getImageTrackingResults()
         if (typeof frame.getImageTrackingResults === 'function') {
             const results = frame.getImageTrackingResults();
             if (results.length > 0) {
@@ -140,11 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncEnvironment() {
         const isClean = state.mode === 'clean-layer';
 
-        // Toggle classes globally across all active containers (both AR.js and WebXR targets)
         document.querySelectorAll('.ad-poc-content').forEach(el => el.setAttribute('visible', !isClean));
         document.querySelectorAll('.clean-layer-content').forEach(el => el.setAttribute('visible', isClean));
 
-        // UI Layer Transitions (Mobile/Laptop)
         if (isClean) {
             if (mobileStats) mobileStats.classList.remove('opacity-0');
             if (mobileBtnLabel) mobileBtnLabel.innerText = "Revert System";
@@ -167,14 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
             btnMeshes.forEach(el => el.setAttribute('color', '#ff0044'));
         }
 
-        // Quest HUD Updates
         if (state.isXR && questHUD && qStatusText) {
             qStatusText.setAttribute('value', isClean ? 'CLEAN LAYER ACTIVE' : 'AD-POCALYPSE ACTIVE');
             qStatusText.setAttribute('color', isClean ? '#00e5ff' : '#ff0044');
         }
     }
 
-    // Exposed to window so A-Frame onclick handlers can reach it
     window.app = {
         toggleMode: function () {
             if (!audioCtx) initAudio();
@@ -182,12 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.mode === 'ad-pocalypse') {
                 state.mode = 'clean-layer';
 
-                // Audio Shift
                 clearTimeout(voiceTimer);
                 speechSynthesis.cancel();
                 droneGain.gain.setTargetAtTime(0.25, audioCtx.currentTime, 1.2);
 
-                // Start Metrics Cycle
                 state.metricsInterval = setInterval(() => {
                     state.targetPlastic += Math.floor(Math.random() * 12) + 5;
                     state.targetEnergy += Math.floor(Math.random() * 30) + 10;
@@ -204,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Hide AR.js Video on Quest ---
     function suppressArJsVideo() {
         if (isQuest) {
             const video = document.querySelector('video');
@@ -215,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Event Listeners ---
     document.getElementById('start-btn').addEventListener('click', () => {
         initAudio();
         if (initOverlay) initOverlay.classList.add('opacity-0');
@@ -246,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileToggleBtn) mobileToggleBtn.addEventListener('click', window.app.toggleMode);
     if (xrToggleBtn) xrToggleBtn.addEventListener('click', window.app.toggleMode);
 
-    // --- XR Session Management ---
     scene.addEventListener('enter-vr', () => {
         state.isXR = true;
         if (mobileUI) mobileUI.classList.add('opacity-0');
@@ -266,8 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (questHUD) questHUD.setAttribute('visible', 'false');
     });
 
-    // --- Quest Spatial Hit-Test Placement (Fallback) ---
-    // Kept alive so you can still spawn the system anywhere if the image tracking flag isn't enabled
     scene.addEventListener('ar-hit-test-select', (e) => {
         if (!state.isXR) return;
 
@@ -302,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Mobile/Laptop AR.js Marker Tracking ---
     const marker = document.getElementById('hiro-marker');
     if (marker) {
         marker.addEventListener('markerFound', () => {
@@ -326,4 +309,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('beforeunload', () => speechSynthesis.cancel());
+
+    // --- Force AR.js Fullscreen Recalibration ---
+    // Fires a fake resize event to force AR.js to recalculate the canvas against our new CSS
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 500);
+    });
 });

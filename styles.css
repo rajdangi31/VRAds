@@ -13,15 +13,17 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
+/* Hard reset to prevent browser UI from messing with viewport size */
+html,
 body {
   margin: 0;
-  overflow: hidden;
-  background-color: #000 !important;
-  /* Prevents white flashes during load */
-  font-family: var(--font-main);
-  position: fixed;
+  padding: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+  font-family: var(--font-main);
+  position: fixed;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
@@ -31,15 +33,32 @@ img {
   -webkit-user-drag: none;
 }
 
-/* --- AR Container Layers --- */
-/* We let AR.js inject the proper width/height inline to maintain the camera's aspect ratio. 
-   We only enforce the Z-index so the 3D canvas sits above the video but below our UI. */
+/* ========================================== */
+/* THE BULLETPROOF AR FULLSCREEN FIX          */
+/* ========================================== */
+video,
+#arjs-video,
 .a-canvas {
-  z-index: 1 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: cover !important;
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
+
+video,
+#arjs-video {
+  z-index: -2 !important;
+}
+
+.a-canvas {
+  z-index: 1 !important;
+}
+
+/* ========================================== */
 
 /* --- Premium Glassmorphism --- */
 .glass-panel {
@@ -178,7 +197,7 @@ img {
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Fix for WebXR DOM Overlay to ensure it doesn't block interactions */
+/* Fix for WebXR DOM Overlay */
 #mobile-ui {
   pointer-events: none;
 }
