@@ -1,3 +1,51 @@
+// --- Custom WebXR Image Tracking Component for Quest 3S ---
+AFRAME.registerComponent('webxr-image-tracker', {
+    init: function () {
+        this.el.sceneEl.addEventListener('enter-vr', () => {
+            this.isWebXR = this.el.sceneEl.is('vr-mode') || this.el.sceneEl.is('ar-mode');
+            this.targetEntity = document.getElementById('webxr-image-target');
+
+            // Note: Native WebXR Image Tracking requires ImageBitmaps to be passed during session init.
+            // As this is an experimental API, we hook into the XR frame to check for tracking results.
+            const session = this.el.sceneEl.renderer.xr.getSession();
+            if (session) {
+                console.log("WebXR Session active. Checking for experimental Image Tracking API...");
+                // If the flag is enabled in chrome://flags, the session will process image tracking here.
+            }
+        });
+
+        this.el.sceneEl.addEventListener('exit-vr', () => {
+            this.isWebXR = false;
+            if (this.targetEntity) this.targetEntity.setAttribute('visible', 'false');
+        });
+    },
+    tick: function () {
+        if (!this.isWebXR || !this.targetEntity) return;
+
+        const frame = this.el.sceneEl.frame;
+        if (!frame) return;
+
+        // Experimental WebXR Image Tracking Hook
+        // When the Quest OS recognizes the image, it returns results in frame.getImageTrackingResults()
+        if (typeof frame.getImageTrackingResults === 'function') {
+            const results = frame.getImageTrackingResults();
+            if (results.length > 0) {
+                const result = results[0];
+                const pose = frame.getPose(result.imageSpace, this.el.sceneEl.renderer.xr.getReferenceSpace());
+
+                if (pose && result.trackingState === 'tracked') {
+                    this.targetEntity.setAttribute('visible', 'true');
+                    this.targetEntity.object3D.position.copy(pose.transform.position);
+                    this.targetEntity.object3D.quaternion.copy(pose.transform.orientation);
+                } else {
+                    this.targetEntity.setAttribute('visible', 'false');
+                }
+            }
+        }
+    }
+});
+
+// --- Main Application Logic ---
 document.addEventListener('DOMContentLoaded', () => {
     // --- State Management ---
     const state = {
@@ -92,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncEnvironment() {
         const isClean = state.mode === 'clean-layer';
 
-        // Toggle classes globally across active containers
+        // Toggle classes globally across all active containers (both AR.js and WebXR targets)
         document.querySelectorAll('.ad-poc-content').forEach(el => el.setAttribute('visible', !isClean));
         document.querySelectorAll('.clean-layer-content').forEach(el => el.setAttribute('visible', isClean));
 
@@ -102,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mobileBtnLabel) mobileBtnLabel.innerText = "Revert System";
             if (btnColorBg) {
                 btnColorBg.style.backgroundColor = "#00e5ff";
-                mobileToggleBtn.style.boxShadow = "0 0 30px rgba(0, 229, 255, 0.4)";
+                if (mobileToggleBtn) mobileToggleBtn.style.boxShadow = "0 0 30px rgba(0, 229, 255, 0.4)";
             }
 
             btnLabels.forEach(el => el.setAttribute('value', 'REVERT SYSTEM'));
@@ -112,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (mobileBtnLabel) mobileBtnLabel.innerText = "Purge Noise";
             if (btnColorBg) {
                 btnColorBg.style.backgroundColor = "#ff0044";
-                mobileToggleBtn.style.boxShadow = "0 0 30px rgba(255, 0, 68, 0.4)";
+                if (mobileToggleBtn) mobileToggleBtn.style.boxShadow = "0 0 30px rgba(255, 0, 68, 0.4)";
             }
 
             btnLabels.forEach(el => el.setAttribute('value', 'PURGE NOISE'));
@@ -196,8 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (mobileToggleBtn) mobileToggleBtn.addEventListener('click', window.app.toggleMode);
-
-    // Fallback for native DOM XR button if not using A-Frame raycaster
     if (xrToggleBtn) xrToggleBtn.addEventListener('click', window.app.toggleMode);
 
     // --- XR Session Management ---
@@ -208,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (xrControls) xrControls.setAttribute('visible', 'true');
         if (questHUD) questHUD.setAttribute('visible', 'true');
 
-        syncEnvironment(); // Re-sync to update HUD strings
+        syncEnvironment();
         if (isQuest) suppressArJsVideo();
     });
 
@@ -220,25 +266,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (questHUD) questHUD.setAttribute('visible', 'false');
     });
 
-    // --- Quest Spatial Hit-Test Placement ---
+    // --- Quest Spatial Hit-Test Placement (Fallback) ---
+    // Kept alive so you can still spawn the system anywhere if the image tracking flag isn't enabled
     scene.addEventListener('ar-hit-test-select', (e) => {
-        if (!state.isXR) return; // Only spawn in actual WebXR sessions
+        if (!state.isXR) return;
 
         const pos = e.detail.position;
         const rot = e.detail.rotation;
 
-        // Spawn a spatial ad at the hit point
         const newAd = document.createElement('a-entity');
         newAd.setAttribute('position', pos);
         newAd.setAttribute('rotation', rot);
-
-        // Tag it so it responds to the global syncEnvironment function
         newAd.classList.add(state.mode === 'ad-pocalypse' ? 'ad-poc-content' : 'clean-layer-content');
 
-        // Clone geometry from the marker templates
         const templateSelector = state.mode === 'ad-pocalypse'
-            ? '#hiro-marker .ad-poc-content'
-            : '#hiro-marker .clean-layer-content';
+            ? '#webxr-image-target .ad-poc-content'
+            : '#webxr-image-target .clean-layer-content';
 
         const template = document.querySelector(templateSelector);
         if (template) {
@@ -246,7 +289,6 @@ document.addEventListener('DOMContentLoaded', () => {
             scene.appendChild(newAd);
         }
 
-        // Play spatial haptic/audio feedback
         if (audioCtx) {
             const osc = audioCtx.createOscillator();
             const g = audioCtx.createGain();
@@ -260,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Mobile/Laptop Marker Tracking ---
+    // --- Mobile/Laptop AR.js Marker Tracking ---
     const marker = document.getElementById('hiro-marker');
     if (marker) {
         marker.addEventListener('markerFound', () => {
