@@ -1,9 +1,8 @@
-// VRads - AR Application Logic
+// VRads - Multi-Device AR Stabilization Logic
 
 document.addEventListener('DOMContentLoaded', () => {
     const state = {
         mode: 'ad-pocalypse',
-        isXR: false,
         plastic: 0,
         energy: 0,
         targetPlastic: 0,
@@ -65,10 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!audioCtx) initAudio();
             if (state.mode === 'ad-pocalypse') {
                 state.mode = 'clean-layer';
-                droneGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 1);
+                droneGain.gain.setTargetAtTime(0.25, audioCtx.currentTime, 1);
                 state.metricsInterval = setInterval(() => {
-                    state.targetPlastic += 5;
-                    state.targetEnergy += 10;
+                    state.targetPlastic += 4;
+                    state.targetEnergy += 12;
                 }, 1500);
             } else {
                 state.mode = 'ad-pocalypse';
@@ -94,21 +93,22 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('mobile-toggle-btn').addEventListener('click', window.app.toggleMode);
 
     function recalibrateResolution() {
-        console.log("Recalibrating AR Viewport...");
+        console.log("Forcing AR Resolution Recalibration...");
         window.dispatchEvent(new Event('resize'));
         
-        // Target all video and canvas elements created by AR.js/A-Frame
-        const elements = document.querySelectorAll('video, .a-canvas');
-        elements.forEach(el => {
-            el.style.width = '100%';
-            el.style.height = '100%';
-            el.style.objectFit = 'cover';
-            el.style.position = 'absolute';
-            el.style.top = '0';
-            el.style.left = '0';
-        });
-        
-        setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
+        // Ensure AR.js video and canvas fill the true viewport
+        setTimeout(() => {
+            const elements = document.querySelectorAll('video, #arjs-video, .a-canvas');
+            elements.forEach(el => {
+                el.style.width = '100vw';
+                el.style.height = '100dvh';
+                el.style.objectFit = 'cover';
+                el.style.position = 'absolute';
+                el.style.top = '0';
+                el.style.left = '0';
+            });
+            window.dispatchEvent(new Event('resize'));
+        }, 500);
     }
 
     window.addEventListener('load', recalibrateResolution);

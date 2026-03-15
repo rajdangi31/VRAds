@@ -13,37 +13,37 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
+<body class="bg-black">
 
+  <!-- HUD SCANLINES -->
   <div class="hud-scanlines"></div>
 
-  <!-- Mobile HUD - Moved to Top of DOM for Z-Index Clarity -->
-  <div id="mobile-ui" class="transition-all-premium">
-    <div class="hud-top-bar">
-      <div class="glass-panel p-3 px-4 rounded-xl flex items-center gap-3">
-        <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div>
-        <div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
-        <div id="m-status-dot" class="status-dot w-2 h-2 rounded-full bg-red-500 pulse-primary"></div>
-        <span id="m-status-label" class="status-label">Initializing...</span>
-      </div>
+  <!-- HUD UI - ABSOLUTE POSITIONING -->
+  <div id="mobile-ui">
+    <!-- TOP LEFT -->
+    <div class="hud-panel-tl glass-panel flex items-center gap-3">
+      <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div>
+      <div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
+      <div id="m-status-dot" class="w-2 h-2 rounded-full bg-red-500 pulse-primary"></div>
+      <span id="m-status-label" class="label-xs text-white">Initializing...</span>
+    </div>
 
-      <div id="mobile-stats" class="glass-panel p-3 px-4 rounded-xl min-w-[130px] opacity-0 transition-all-premium">
-        <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div>
-        <div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
-        <p class="metrics-label mb-1">Environmental Gain</p>
-        <div class="metrics-value">
-          PLAS: <span id="m-plastic" class="text-cyan-400 font-bold">0</span>g<br>
-          ENRG: <span id="m-energy" class="text-cyan-400 font-bold">0</span>W
-        </div>
+    <!-- TOP RIGHT -->
+    <div id="mobile-stats" class="hud-panel-tr glass-panel min-w-[130px] opacity-0 transition-all-premium">
+      <div class="hud-corner hud-tl"></div><div class="hud-corner hud-tr"></div>
+      <div class="hud-corner hud-bl"></div><div class="hud-corner hud-br"></div>
+      <p class="label-xs cyan-text mb-1">Environmental Gain</p>
+      <div class="font-mono text-[11px] leading-tight text-white/90">
+        PLAS: <span id="m-plastic" class="font-bold cyan-text">0</span>g<br>
+        ENRG: <span id="m-energy" class="font-bold cyan-text">0</span>W
       </div>
     </div>
 
-    <div class="flex-grow"></div>
-
-    <div class="pb-12 flex flex-col items-center gap-4">
-      <p class="text-[8px] uppercase tracking-[0.4em] text-white/20 font-bold animate-pulse">Touch to Reclamation</p>
+    <!-- BOTTOM CONTROLS -->
+    <div class="hud-panel-bottom">
+      <p class="label-xs text-white/20 animate-pulse tracking-[0.4em]">Touch to Reclamation</p>
       <button id="mobile-toggle-btn"
-        class="pointer-events-auto relative w-[85vw] max-w-[280px] py-4 glass-panel rounded-full text-white font-black uppercase tracking-[0.25em] text-[10px] shadow-[0_0_20px_rgba(255,0,68,0.2)] border border-white/5 overflow-hidden active:scale-95 transition-all">
+        class="pointer-events-auto relative w-[85vw] max-w-[280px] py-4 glass-panel rounded-full text-white font-black uppercase tracking-[0.25em] text-[10px] shadow-2xl active:scale-95 transition-all overflow-hidden">
         <div id="btn-color-bg" class="absolute inset-0 bg-[#ff0044] opacity-80"></div>
         <span class="relative z-10" id="mobile-btn-label">Purge Noise</span>
       </button>
@@ -52,7 +52,6 @@
 
   <a-scene
     arjs="sourceType: webcam; debugUIEnabled: false;"
-    embedded
     vr-mode-ui="enabled: false"
     xr-mode-ui="enabled: false"
     renderer="antialias: true; alpha: true; logarithmicDepthBuffer: true;"
@@ -70,21 +69,22 @@
         </a-entity>
         <a-entity class="clean-layer-content" visible="false">
           <a-entity scale="0.4 0.4 0.4" animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
-            <a-sphere radius="1.2" color="#00e5ff" material="opacity: 0.1; transparent: true"></a-sphere>
+            <a-sphere radius="1.2" color="#00e5ff" material="opacity: 0.15; transparent: true"></a-sphere>
             <a-torus-knot radius="0.7" color="#00e5ff"></a-torus-knot>
           </a-entity>
         </a-entity>
       </a-entity>
     </a-marker>
 
-    <a-camera></a-camera>
+    <a-camera position="0 0 0"></a-camera>
   </a-scene>
 
-  <div id="init-overlay" class="fixed inset-0 z-[10000] bg-[#0a0f19] flex items-center justify-center p-8 transition-opacity duration-800">
+  <!-- INITIAL OVERLAY -->
+  <div id="init-overlay" class="fixed inset-0 z-[20000] bg-[#0a0f19] flex items-center justify-center p-8 transition-opacity duration-800">
     <div class="text-center">
       <h1 class="text-white text-4xl font-black mb-1 italic tracking-tighter">VRads</h1>
       <div class="w-10 h-0.5 bg-cyan-400 mx-auto mb-10"></div>
-      <button id="start-btn" class="px-14 py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-full text-[10px] active:scale-95">Authorize Link</button>
+      <button id="start-btn" class="px-12 py-4 bg-white text-black font-black uppercase tracking-[0.2em] rounded-full text-[10px] active:scale-95 shadow-2xl">Authorize Link</button>
     </div>
   </div>
 

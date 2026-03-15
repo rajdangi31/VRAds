@@ -13,11 +13,11 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
+/* --- Core Reset --- */
 html, body {
   margin: 0;
   padding: 0;
   width: 100vw;
-  height: 100vh;
   height: 100dvh;
   overflow: hidden;
   background-color: #000;
@@ -30,62 +30,53 @@ body {
   touch-action: none;
 }
 
-/* --- Massive HUD Priority --- */
+/* --- HUD Overlays --- */
 #mobile-ui {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  z-index: 9999 !important; /* Above everything */
+  position: fixed;
+  inset: 0;
+  z-index: 10000; /* Absolute Top */
   pointer-events: none;
-  display: flex !important;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px) 20px;
-  box-sizing: border-box;
+  color: white;
 }
 
-.hud-top-bar {
+/* Absolute Corner Anchoring */
+.hud-panel-tl {
+  position: absolute;
+  top: 25px;
+  left: 20px;
+}
+
+.hud-panel-tr {
+  position: absolute;
+  top: 25px;
+  right: 20px;
+}
+
+.hud-panel-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: 40px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 
-#mobile-ui button, 
 .pointer-events-auto {
   pointer-events: auto;
 }
 
-/* --- AR.js / A-Frame Sizing --- */
-/* Target the video and canvas added by AR.js to the body or scene */
-video, 
-.a-canvas,
-#arjs-video {
-  width: 100% !important;
-  height: 100% !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  object-fit: cover !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  margin: 0 !important;
-  z-index: -5 !important;
-}
-
-.a-canvas {
-  z-index: 1 !important;
-}
-
-/* --- Hud Components --- */
+/* Glass Panels */
 .glass-panel {
   background: var(--glass-bg);
   backdrop-filter: blur(25px) saturate(160%);
   -webkit-backdrop-filter: blur(25px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  position: relative;
+  padding: 12px 16px;
+  border-radius: 12px;
 }
 
 .hud-corner {
@@ -95,34 +86,41 @@ video,
   border-color: var(--cyan-primary);
   opacity: 0.8;
 }
-
 .hud-tl { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
 .hud-tr { top: 0; right: 0; border-top: 2px solid; border-right: 2px solid; }
 .hud-bl { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; }
 .hud-br { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
 
-.status-label { font-size: 10px; letter-spacing: 0.25em; font-weight: 900; color: #fff; text-transform: uppercase; }
-.metrics-label { font-size: 8px; letter-spacing: 0.2em; font-weight: 800; color: var(--cyan-primary); text-transform: uppercase; }
-.metrics-value { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: #fff; }
+/* Typography */
+.label-xs { font-size: 9px; letter-spacing: 0.25em; font-weight: 900; text-transform: uppercase; }
+.label-sm { font-size: 11px; font-weight: 700; color: #fff; }
+.cyan-text { color: var(--cyan-primary); }
 
-.opacity-0 { opacity: 0 !important; pointer-events: none; }
+/* --- AR Setup --- */
+video, #arjs-video, .a-canvas {
+  width: 100vw !important;
+  height: 100dvh !important;
+  object-fit: cover !important;
+}
+
+.hud-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+.opacity-0 { opacity: 0; pointer-events: none; }
 .transition-all-premium { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 
+/* Animations */
 @keyframes pulse-cyan {
   0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
   70% { box-shadow: 0 0 0 15px rgba(0, 229, 255, 0); }
   100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
 }
 .pulse-primary { animation: pulse-cyan 2s infinite; }
-
-/* Scanlines */
-.hud-scanlines {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
-    linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.005), rgba(0, 0, 255, 0.01));
-  background-size: 100% 4px, 3px 100%;
-  z-index: 1000;
-  opacity: 0.15;
-}
