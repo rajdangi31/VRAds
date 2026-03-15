@@ -100,14 +100,24 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncEnvironment() {
         const isClean = state.mode === 'clean-layer';
         
+        // Hide ALL special content containers first to ensure no ghosts
+        if (worldContent) worldContent.setAttribute('visible', 'false');
+        if (xrContent) xrContent.setAttribute('visible', 'false');
+
         // Define which containers we should be managing
         let activeContainers = [];
         if (isQuest) {
+            // Quest gets the world and XR views
             activeContainers = [worldContent, xrContent];
+            if (worldContent && !state.isXR) worldContent.setAttribute('visible', 'true');
+            if (xrContent && state.isXR) xrContent.setAttribute('visible', 'true');
         } else {
             // For mobile/laptop, only manage the marker content
             const marker = document.getElementById('hiro-marker');
-            if (marker) activeContainers = [marker];
+            if (marker) {
+                activeContainers = [marker];
+                marker.setAttribute('visible', 'true');
+            }
         }
 
         activeContainers.forEach(container => {

@@ -33,17 +33,14 @@
 
     <a-marker id="hiro-marker" preset="hiro" smooth="false">
       <a-entity class="ad-poc-content">
-        <!-- Opaque base to mask the Hiro marker — slightly larger than the ~1.7 unit marker -->
-        <a-box position="0 0.005 0" width="2.2" height="0.01" depth="2.2" color="#111111"
-          material="shader: flat; side: double; opacity: 1.0; transparent: false">
-        </a-box>
-
-        <!-- Ad image sitting clearly above the base to avoid z-fighting -->
-        <a-image src="#coke-img" position="0 0.025 0" rotation="-90 0 0" width="2.0" height="2.0" class="neon-flicker"
+        <!-- Physical opaque base to completely mask the Hiro marker -->
+        <a-box position="0 0.01 0" rotation="0 0 0" width="3.5" height="0.01" depth="1.95" color="#000"
+          material="shader: flat; side: double; opacity: 1.0; transparent: false"></a-box>
+        <a-image src="#coke-img" position="0 0.02 0" rotation="-90 0 0" width="3.2" height="1.8" class="neon-flicker"
           material="side: double; transparent: true; opacity: 1.0">
         </a-image>
       </a-entity>
-
+      <!-- 
       <a-entity class="clean-layer-content" visible="false">
         <a-entity position="0 0.2 0" scale="0.4 0.4 0.4"
           animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
@@ -54,7 +51,7 @@
         </a-entity>
         <a-ring radius-inner="0.4" radius-outer="0.5" color="#00e5ff" position="0 0.02 0" rotation="-90 0 0"
           material="opacity: 0.4; transparent: true"></a-ring>
-      </a-entity>
+      </a-entity> -->
     </a-marker>
 
     <a-entity id="world-content" visible="false">
@@ -92,7 +89,7 @@
         </a-entity>
       </a-entity>
 
-      <a-entity id="xr-ui-panel" position="0.5 0.01 0.5" rotation="0 -35 0">
+      <!-- <a-entity id="xr-ui-panel" position="0.5 0.01 0.5" rotation="0 -35 0">
         <a-plane width="1.2" height="0.8" color="#0a0f19" material="opacity: 0.85; transparent: true"
           rounded="0.1"></a-plane>
         <a-entity class="clickable" onclick="app.toggleMode()" position="0 -0.01 0.05" id="xr-main-btn">
@@ -107,11 +104,11 @@
             position="0 0.05 0" font="mozillavr"></a-text>
           <a-text class="metric-energy" value="Energy: 0W" color="white" align="center" width="1.8" position="0 -0.05 0"
             font="mozillavr"></a-text>
-        </a-entity>
-      </a-entity>
+        </a-entity> -->
+    </a-entity>
     </a-entity>
 
-    <a-entity camera position="0 1.6 0"></a-entity>
+    <a-entity camera position="0 0.5 0"></a-entity>
   </a-scene>
 
   <div id="mobile-ui" class="fixed inset-0 pointer-events-none z-[2000] flex flex-col p-6 transition-all-premium">
