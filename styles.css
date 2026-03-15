@@ -197,9 +197,24 @@ video,
 /* Fix for WebXR DOM Overlay to ensure it doesn't block interactions */
 #mobile-ui {
   pointer-events: none;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-#mobile-ui button,
+#mobile-ui button, 
 #mobile-ui .pointer-events-auto {
   pointer-events: auto;
+}
+
+/* Responsiveness Tweaks */
+@media (orientation: landscape) {
+  #mobile-ui {
+    flex-direction: row;
+    align-items: flex-end;
+    padding-bottom: 2rem;
+  }
+  
+  #mobile-stats {
+    margin-bottom: 0;
+    margin-right: 2rem;
+  }
 }

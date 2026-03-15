@@ -326,4 +326,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('beforeunload', () => speechSynthesis.cancel());
+
+    // --- Bulletproof Resolution Recalibration ---
+    function recalibrateResolution() {
+        console.log("Recalibrating AR resolution...");
+        window.dispatchEvent(new Event('resize'));
+        
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 500);
+    }
+
+    window.addEventListener('load', recalibrateResolution);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(recalibrateResolution, 300);
+    });
 });
