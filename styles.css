@@ -13,14 +13,14 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* --- Clean Viewport Setup --- */
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
-  background-color: #000; /* No white flashes */
+  background-color: #000;
 }
 
 body {
@@ -30,45 +30,14 @@ body {
   touch-action: none;
 }
 
-/* --- Absolute Video / Canvas Center Fix --- */
-/* Target all possible AR.js/A-Frame output elements */
-video,
-#arjs-video,
-.a-canvas {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
+/* --- Massive HUD Priority --- */
+#mobile-ui {
+  position: fixed !important;
+  inset: 0 !important;
   width: 100vw !important;
   height: 100dvh !important;
-  object-fit: cover !important;
-  margin: 0 !important;
-  z-index: -2 !important;
-}
-
-.a-canvas {
-  z-index: 1 !important;
-}
-
-/* --- HUD Scanlines --- */
-.hud-scanlines {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
-    linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-  background-size: 100% 4px, 3px 100%;
+  z-index: 9999 !important; /* Above everything */
   pointer-events: none;
-  z-index: 1000;
-  opacity: 0.2;
-}
-
-/* --- Mobile HUD UI --- */
-#mobile-ui {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2000;
   display: flex !important;
   flex-direction: column;
   justify-content: space-between;
@@ -88,15 +57,35 @@ video,
   pointer-events: auto;
 }
 
-/* Panels */
+/* --- AR.js / A-Frame Sizing --- */
+/* Target the video and canvas added by AR.js to the body or scene */
+video, 
+.a-canvas,
+#arjs-video {
+  width: 100% !important;
+  height: 100% !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  object-fit: cover !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  margin: 0 !important;
+  z-index: -5 !important;
+}
+
+.a-canvas {
+  z-index: 1 !important;
+}
+
+/* --- Hud Components --- */
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(25px) saturate(160%);
+  -webkit-backdrop-filter: blur(25px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   position: relative;
-  overflow: hidden;
 }
 
 .hud-corner {
@@ -104,7 +93,7 @@ video,
   width: 8px;
   height: 8px;
   border-color: var(--cyan-primary);
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .hud-tl { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
@@ -112,13 +101,12 @@ video,
 .hud-bl { bottom: 0; left: 0; border-bottom: 2px solid; border-left: 2px solid; }
 .hud-br { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
 
-/* Typography */
-.status-label { font-size: 10px; letter-spacing: 0.2em; font-weight: 800; color: #fff; text-transform: uppercase; }
+.status-label { font-size: 10px; letter-spacing: 0.25em; font-weight: 900; color: #fff; text-transform: uppercase; }
 .metrics-label { font-size: 8px; letter-spacing: 0.2em; font-weight: 800; color: var(--cyan-primary); text-transform: uppercase; }
 .metrics-value { font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: #fff; }
 
-.opacity-0 { opacity: 0 !important; cursor: default; }
-.transition-all-premium { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.opacity-0 { opacity: 0 !important; pointer-events: none; }
+.transition-all-premium { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 
 @keyframes pulse-cyan {
   0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
@@ -127,7 +115,14 @@ video,
 }
 .pulse-primary { animation: pulse-cyan 2s infinite; }
 
-@media (max-width: 480px) {
-  .metrics-label { font-size: 7px; }
-  .status-label { font-size: 9px; }
+/* Scanlines */
+.hud-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.005), rgba(0, 0, 255, 0.01));
+  background-size: 100% 4px, 3px 100%;
+  z-index: 1000;
+  opacity: 0.15;
 }

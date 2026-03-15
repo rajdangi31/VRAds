@@ -1,13 +1,4 @@
-// VRads - Premium AR Engine
-
-AFRAME.registerComponent('webxr-image-tracker', {
-    init: function () {
-        this.el.sceneEl.addEventListener('enter-vr', () => {
-            this.isWebXR = this.el.sceneEl.is('vr-mode') || this.el.sceneEl.is('ar-mode');
-        });
-        this.el.sceneEl.addEventListener('exit-vr', () => { this.isWebXR = false; });
-    }
-});
+// VRads - AR Application Logic
 
 document.addEventListener('DOMContentLoaded', () => {
     const state = {
@@ -47,8 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.plastic < state.targetPlastic) state.plastic += Math.ceil((state.targetPlastic - state.plastic) * 0.1);
         if (state.energy < state.targetEnergy) state.energy += Math.ceil((state.targetEnergy - state.energy) * 0.1);
         
-        if (document.getElementById('m-plastic')) document.getElementById('m-plastic').innerText = state.plastic.toLocaleString();
-        if (document.getElementById('m-energy')) document.getElementById('m-energy').innerText = state.energy.toLocaleString();
+        const pElem = document.getElementById('m-plastic');
+        const eElem = document.getElementById('m-energy');
+        if (pElem) pElem.innerText = state.plastic.toLocaleString();
+        if (eElem) eElem.innerText = state.energy.toLocaleString();
         
         requestAnimationFrame(updateRollingMetrics);
     }
@@ -74,9 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 state.mode = 'clean-layer';
                 droneGain.gain.setTargetAtTime(0.2, audioCtx.currentTime, 1);
                 state.metricsInterval = setInterval(() => {
-                    state.targetPlastic += 8;
-                    state.targetEnergy += 15;
-                }, 2000);
+                    state.targetPlastic += 5;
+                    state.targetEnergy += 10;
+                }, 1500);
             } else {
                 state.mode = 'ad-pocalypse';
                 droneGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
@@ -100,25 +93,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('mobile-toggle-btn').addEventListener('click', window.app.toggleMode);
 
-    scene.addEventListener('enter-vr', () => {
-        state.isXR = true;
-        if (mobileUI) mobileUI.classList.add('opacity-0');
-    });
-
-    scene.addEventListener('exit-vr', () => {
-        state.isXR = false;
-        if (mobileUI) mobileUI.classList.remove('opacity-0');
-    });
-
     function recalibrateResolution() {
-        // Essential for AR.js on mobile to fill the screen correctly after DOM shifts
+        console.log("Recalibrating AR Viewport...");
         window.dispatchEvent(new Event('resize'));
-        const v = document.querySelector('video');
-        if (v) {
-            v.style.width = '100%';
-            v.style.height = '100%';
-            v.style.objectFit = 'cover';
-        }
+        
+        // Target all video and canvas elements created by AR.js/A-Frame
+        const elements = document.querySelectorAll('video, .a-canvas');
+        elements.forEach(el => {
+            el.style.width = '100%';
+            el.style.height = '100%';
+            el.style.objectFit = 'cover';
+            el.style.position = 'absolute';
+            el.style.top = '0';
+            el.style.left = '0';
+        });
+        
         setTimeout(() => window.dispatchEvent(new Event('resize')), 500);
     }
 
