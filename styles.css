@@ -1,33 +1,78 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;900&family=JetBrains+Mono:wght@500;800&display=swap');
+/* VRads - Premium Unified AR Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=JetBrains+Mono:wght@500;800&display=swap');
 
 :root {
   --cyan-primary: #00e5ff;
+  --cyan-glow: rgba(0, 229, 255, 0.4);
   --red-primary: #ff0044;
+  --red-glow: rgba(255, 0, 68, 0.4);
   --bg-deep: #0a0f19;
+  --glass-bg: rgba(10, 15, 25, 0.7);
+  --font-main: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 body {
   margin: 0;
   overflow: hidden;
   background-color: transparent !important;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-main);
+  position: fixed;
+  width: 100%;
+  height: 100%;
   user-select: none;
+  -webkit-user-select: none;
   touch-action: none;
 }
 
-.glass-panel {
-  background: rgba(10, 15, 25, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+img {
+  -webkit-user-drag: none;
 }
 
+/* --- AR Container Layers --- */
+#arjs-video {
+  width: 100% !important;
+  height: 100% !important;
+  margin-left: 0 !important;
+  top: 0 !important;
+  object-fit: cover !important;
+  z-index: -1 !important;
+}
+
+.a-canvas {
+  z-index: 1 !important;
+}
+
+/* --- Premium Glassmorphism --- */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.05), transparent);
+  pointer-events: none;
+}
+
+/* --- HUD Corner Decoration --- */
 .hud-corner {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   border-color: var(--cyan-primary);
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
 .hud-tl {
@@ -58,27 +103,40 @@ body {
   border-right: 2px solid;
 }
 
+/* --- HUD Scanline Effect --- */
 .hud-scanlines {
   position: fixed;
-  inset: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
-  background-size: 100% 4px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 4px, 3px 100%;
   pointer-events: none;
   z-index: 1000;
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
+/* --- Animations --- */
 @keyframes neon-flicker {
 
   0%,
+  18%,
+  22%,
+  25%,
+  53%,
+  57%,
   100% {
     opacity: 1;
-    filter: brightness(1.2);
+    filter: brightness(1.5) drop-shadow(0 0 10px var(--cyan-glow));
   }
 
-  50% {
-    opacity: 0.9;
-    filter: brightness(1);
+  20%,
+  24%,
+  55% {
+    opacity: 0.8;
+    filter: brightness(0.9);
   }
 }
 
@@ -86,36 +144,38 @@ body {
   animation: neon-flicker 2s infinite alternate ease-in-out;
 }
 
-.pulse-primary {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
+@keyframes pulse-cyan {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 68, 0.4);
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4);
   }
 
   70% {
-    box-shadow: 0 0 0 10px rgba(255, 0, 68, 0);
+    box-shadow: 0 0 0 15px rgba(0, 229, 255, 0);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(255, 0, 68, 0);
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0);
   }
 }
 
-.transition-all-premium {
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.opacity-0 {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(10px);
+.pulse-primary {
+  animation: pulse-cyan 2s infinite;
 }
 
 .status-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- State Transitions --- */
+.opacity-0 {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
+.transition-all-premium {
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
