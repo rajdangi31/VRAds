@@ -231,7 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isQuest) {
             if (worldContent) worldContent.setAttribute('visible', 'true');
+            if (xrContent) xrContent.setAttribute('visible', 'true');
             suppressArJsVideo();
+        } else {
+            // Hard hide anything that isn't the marker content for desktop/mobile
+            if (worldContent) worldContent.parentNode.removeChild(worldContent);
+            if (xrContent) xrContent.parentNode.removeChild(xrContent);
         }
     });
 
